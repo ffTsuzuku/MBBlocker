@@ -1,0 +1,3 @@
+alert('Block Page!!!')
+
+export {}
