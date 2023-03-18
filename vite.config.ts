@@ -8,6 +8,7 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 main: 'index.html',
+                block: 'block.html',
                 main2: 'src/main.tsx',
                 sourceContent: 'src/contentScripts/block.ts',
             },

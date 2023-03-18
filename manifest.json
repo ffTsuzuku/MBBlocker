@@ -9,8 +9,14 @@
     },
     "content_scripts": [
         {
-            "js": ["assets/block.js"],
-            "matches": ["https://developer.chrome.com/docs/extensions/*"]
+            "js": ["assets/sourceContent.js"],
+            "matches": ["<all_urls>"]
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": ["block.html"],
+            "matches": ["https://*/*", "http://*/*"]
         }
     ]
 }
