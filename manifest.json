@@ -18,5 +18,6 @@
             "resources": ["block.html"],
             "matches": ["https://*/*", "http://*/*"]
         }
-    ]
+    ],
+    "permissions": ["storage", "activeTab"]
 }
