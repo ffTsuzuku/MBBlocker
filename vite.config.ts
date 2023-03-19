@@ -11,6 +11,7 @@ export default defineConfig({
                 block: 'block.html',
                 main2: 'src/main.tsx',
                 sourceContent: 'src/contentScripts/block.ts',
+                background: 'src/backgroundJobs/background.ts',
             },
             output: {
                 entryFileNames: 'assets/[name].js',

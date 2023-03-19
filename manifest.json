@@ -19,5 +19,8 @@
             "matches": ["https://*/*", "http://*/*"]
         }
     ],
-    "permissions": ["storage", "activeTab"]
+    "permissions": ["storage", "activeTab"],
+    "background": {
+        "service_worker": "assets/background.js"
+    }
 }

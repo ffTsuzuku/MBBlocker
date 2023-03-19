@@ -7,19 +7,24 @@ import { Flex } from '@chakra-ui/react'
 
 import { getSiteStatus, setSiteStatus } from './utility/storage'
 
+import { getActiveTabUrl } from './utility/tabs'
+
 function App() {
     const [blocked, setBlocked] = useState(false)
 
     useEffect(() => {
         const setBlockedStatus = async () => {
-            setBlocked(await getSiteStatus('mew'))
+            const site = await getActiveTabUrl()
+            if (!site) return
+            setBlocked(await getSiteStatus(site))
         }
         setBlockedStatus()
     }, [])
 
     const toggleBlock = () => {
         const toggleState = async () => {
-            const site = window.location.href
+            const site = await getActiveTabUrl()
+            if (!site) return
             setSiteStatus(site, !blocked)
             setBlocked(!blocked)
         }
