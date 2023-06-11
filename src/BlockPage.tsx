@@ -15,6 +15,8 @@ function App() {
                 h={'100vh'}
                 bgColor={'blackAlpha.800'}
                 gridTemplateRows={'6fr .5fr'}
+                justifyContent={'center'}
+                alignItems={'center'}
             >
                 <AlternativeSites />
                 <Footer />

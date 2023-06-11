@@ -24,6 +24,7 @@ function App() {
     const toggleBlock = () => {
         const toggleState = async () => {
             const site = await getActiveTabUrl()
+            console.log('Site', site)
             if (!site) return
             setSiteStatus(site, !blocked)
             setBlocked(!blocked)

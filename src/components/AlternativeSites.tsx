@@ -22,7 +22,6 @@ const SiteCard = () => {
 
     const footerText = 'Dummy.com'
     const color = randomcColor()
-    console.log(color)
 
     return (
         <Box
@@ -75,20 +74,18 @@ const AlternativeSites = () => {
     const glowColor = randomcColor()
     return (
         <Flex
+            boxShadow={`0 0 5px 5px ${glowColor}, 0 0 10px 10px ${glowColor}, 0 0 10px 15px ${glowColor}, 0 0 50px 20px ${glowColor}`}
             alignItems={'center'}
-            h={'100%'}
+            h={'80%'}
+            w={'50%'}
             justifyContent={'center'}
+            justifySelf={'center'}
+            overflow={'auto'}
+            flexWrap={'wrap'}
+            borderRadius={'7px'}
+            p={3}
         >
-            <Flex
-                boxShadow={`0 0 5px 5px ${glowColor}, 0 0 10px 10px ${glowColor}, 0 0 10px 15px ${glowColor}, 0 0 50px 20px ${glowColor}`}
-                justifyContent={'flex-start'}
-                alignItems={'flex-start'}
-                flexWrap={'wrap'}
-                w={'64%'}
-                borderRadius={'7px'}
-            >
-                {siteCardsJsx}
-            </Flex>
+            {siteCardsJsx}
         </Flex>
     )
 }

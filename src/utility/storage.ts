@@ -20,7 +20,6 @@ const setSiteStatus = async (site: string, status: boolean) => {
     chrome.storage.local.set({
         MbBlock: extensionData,
     })
-    console.log('updated status')
 }
 
 export { getSiteStatus, dataKey, setSiteStatus }
