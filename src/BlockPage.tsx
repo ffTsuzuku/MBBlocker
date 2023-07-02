@@ -6,7 +6,7 @@ import Footer from './components/Footer'
 import AlternativeSites from './components/AlternativeSites'
 import { getExtensionData } from './utility/storage'
 
-import { Button, Flex, Grid } from '@chakra-ui/react'
+import { Button, Flex, Grid, Box } from '@chakra-ui/react'
 
 function App() {
     useEffect(() => {
@@ -21,12 +21,13 @@ function App() {
                 w={'100vw'}
                 h={'100vh'}
                 bgColor={'blackAlpha.800'}
-                gridTemplateRows={'6fr .5fr'}
+                gridTemplateRows={'1fr'}
                 justifyContent={'center'}
                 alignItems={'center'}
             >
-                <AlternativeSites />
-                <Footer />
+                <Box w={'100%'}>
+                    <AlternativeSites />
+                </Box>
             </Grid>
         </div>
     )

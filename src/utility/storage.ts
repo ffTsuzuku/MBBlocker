@@ -11,7 +11,6 @@ const getExtensionData = async (): Promise<extensionData> => {
 const getSiteStatus = async (href: string): Promise<boolean> => {
     const { list = {} } = (await getExtensionData()) ?? {}
 
-    console.log('Site status', list[href])
     return list[href]
 }
 
