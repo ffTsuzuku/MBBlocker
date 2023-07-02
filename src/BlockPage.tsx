@@ -3,7 +3,7 @@ import reactLogo from './assets/react.svg'
 import './App.css'
 
 import Footer from './components/Footer'
-import AlternativeSites from './components/AlternativeSites'
+import BlockedSites from './components/BlockedSites'
 import { getExtensionData } from './utility/storage'
 
 import { Button, Flex, Grid, Box } from '@chakra-ui/react'
@@ -18,16 +18,15 @@ function App() {
     return (
         <div className='App'>
             <Grid
+                p={'50px'}
                 w={'100vw'}
                 h={'100vh'}
                 bgColor={'blackAlpha.800'}
                 gridTemplateRows={'1fr'}
-                justifyContent={'center'}
-                alignItems={'center'}
+                justifyContent={'flex-start'}
+                alignItems={'flex-start'}
             >
-                <Box w={'100%'}>
-                    <AlternativeSites />
-                </Box>
+                <BlockedSites />
             </Grid>
         </div>
     )

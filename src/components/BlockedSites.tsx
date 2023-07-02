@@ -43,10 +43,17 @@ const SiteCard = ({
             borderRadius='lg'
             overflow='hidden'
             position='relative'
-            w={'400px'}
+            w={{ lg: '333px' }}
         >
-            <Box position={'absolute'} ml={'90%'} p={3} onClick={removeSite}>
-                <IoMdClose color='white' />
+            <Box position={'absolute'} ml={'85%'} p={3} onClick={removeSite}>
+                <IoMdClose
+                    cursor={'pointer'}
+                    color='black'
+                    fontWeight={'bold'}
+                    fontSize={'30px'}
+                    strokeWidth={'4px'}
+                    fill='white'
+                />
             </Box>
             <Image h={'100%'} w={'100%'} src={imageUrl} alt='Card background' />
             <Text
@@ -67,7 +74,7 @@ const SiteCard = ({
     )
 }
 
-const AlternativeSites = () => {
+const BlockedSites = () => {
     const [blockedSites, setBlockedSites] = useState<extensionData['list']>()
 
     const getBlockedSites = async () => {
@@ -89,29 +96,33 @@ const AlternativeSites = () => {
     }, [])
 
     const temp = {
-        'https:reddit.com': true,
+        'https://reddit.com': true,
+        'https://google.com': true,
+        'https://wiki.com': true,
+        'https://youtube.com': true,
+        'https://netflix.com': true,
+        'https:://hulu.com': true,
     }
     const siteCardsJsx = Object.keys(blockedSites ?? temp).map((site) => (
         <SiteCard siteName={site} removeSite={() => removeBlockedSite(site)} />
     ))
 
-    const glowColor = randomcColor()
+    const glowColor = 'gray'
     return (
         <Flex
             boxShadow={`0 0 5px 5px ${glowColor}, 0 0 10px 10px ${glowColor}, 0 0 10px 15px ${glowColor}, 0 0 50px 20px ${glowColor}`}
-            alignItems={'center'}
             h={'100%'}
             w={'100%'}
-            justifyContent={'center'}
-            justifySelf={'center'}
             overflow={'auto'}
             flexWrap={'wrap'}
             borderRadius={'7px'}
-            p={3}
+            alignItems={'flex-start'}
+            alignContent={'flex-start'}
+            justifyContent={'flex-start'}
         >
             {siteCardsJsx}
         </Flex>
     )
 }
 
-export default AlternativeSites
+export default BlockedSites
