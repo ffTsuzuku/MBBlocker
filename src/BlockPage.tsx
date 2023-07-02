@@ -1,13 +1,20 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
 
 import Footer from './components/Footer'
 import AlternativeSites from './components/AlternativeSites'
+import { getExtensionData } from './utility/storage'
 
 import { Button, Flex, Grid } from '@chakra-ui/react'
 
 function App() {
+    useEffect(() => {
+        async function getData() {
+            console.log('eData', await getExtensionData())
+        }
+    }, [])
+
     return (
         <div className='App'>
             <Grid

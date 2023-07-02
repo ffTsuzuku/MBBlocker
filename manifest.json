@@ -20,6 +20,7 @@
         }
     ],
     "permissions": ["storage", "activeTab"],
+    "options_page": "block.html",
     "background": {
         "service_worker": "assets/background.js"
     }

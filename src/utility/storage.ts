@@ -1,6 +1,10 @@
 const dataKey = 'MbBlock'
 
-const getExtensionData = async () => {
+type extensionData = {
+    list: { [key: string]: boolean }
+}
+
+const getExtensionData = async (): Promise<extensionData> => {
     return (await chrome.storage.local.get(dataKey))[dataKey]
 }
 
@@ -22,4 +26,6 @@ const setSiteStatus = async (site: string, status: boolean) => {
     })
 }
 
-export { getSiteStatus, dataKey, setSiteStatus }
+export { getSiteStatus, dataKey, setSiteStatus, getExtensionData }
+
+export type { extensionData }

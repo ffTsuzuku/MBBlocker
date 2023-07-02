@@ -59,12 +59,6 @@ function App() {
             bg={'blue.100'}
         >
             {iconJSX}
-            {/* <a
-                href='https://www.flaticon.com/free-icons/toy'
-                title='toy icons'
-            >
-                Toy icons created by Darius Dan - Flaticon
-            </a> */}
         </Flex>
     )
 }

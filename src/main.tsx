@@ -7,7 +7,10 @@ import './index.css'
 import { ChakraProvider } from '@chakra-ui/react'
 
 let ContentJSX = <App />
-if (import.meta.env.VITE_RENDER_PAGE === 'BLOCK_PAGE') {
+if (
+    import.meta.env.VITE_RENDER_PAGE === 'BLOCK_PAGE' &&
+    !import.meta.env.PROD
+) {
     ContentJSX = <BlockPage />
 }
 

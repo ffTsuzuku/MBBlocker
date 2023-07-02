@@ -1,4 +1,6 @@
 import { Flex, Box, Image, Text, theme } from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
+import { getExtensionData, extensionData } from '../utility/storage'
 
 const randomcColor = () => {
     const { colors } = theme
@@ -60,6 +62,14 @@ const SiteCard = () => {
 }
 
 const AlternativeSites = () => {
+    const [blockedSites, setBlockedSites] = useState<extensionData>()
+    useEffect(() => {
+        const getBlockedSites = async () => {
+            const data = await getExtensionData()
+            const { list: blockedSites } = data
+            console.log('bs', blockedSites)
+        }
+    }, [])
     const altSites = [
         'Test',
         'Test',
