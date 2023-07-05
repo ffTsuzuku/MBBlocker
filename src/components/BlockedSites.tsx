@@ -1,4 +1,16 @@
-import { Flex, Box, Image, Text, theme, list } from '@chakra-ui/react'
+import {
+    Flex,
+    Box,
+    Image,
+    Text,
+    Grid,
+    InputGroup,
+    Input,
+    InputRightElement,
+    Button,
+    InputLeftElement,
+    Select,
+} from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import {
     getExtensionData,
@@ -7,22 +19,7 @@ import {
 } from '../utility/storage'
 
 import { IoMdClose } from 'react-icons/io'
-
-const randomcColor = () => {
-    const { colors } = theme
-    const colorNames = Object.keys(colors).slice(2)
-
-    const randomColor =
-        colorNames[Math.floor(Math.random() * colorNames.length)]
-
-    //@ts-ignore
-    const shadeNames = Object.keys(colors[randomColor])
-    const randomShade =
-        shadeNames[Math.floor(Math.random() * shadeNames.length)]
-
-    //@ts-ignore
-    return colors[randomColor][randomShade]
-}
+import { isSimilar } from '../utility/strings'
 
 const SiteCard = ({
     siteName,
@@ -74,13 +71,18 @@ const SiteCard = ({
     )
 }
 
+type BlockedSiteDDOperations = 'Add' | 'Filter'
+
 const BlockedSites = () => {
     const [blockedSites, setBlockedSites] = useState<extensionData['list']>()
+    const [ddOperation, setDDOperation] =
+        useState<BlockedSiteDDOperations>('Filter')
+    const [inputValue, setInputValue] = useState<string>()
 
     const getBlockedSites = async () => {
         const data = await getExtensionData()
         const { list: blockedSites } = data
-        console.log(blockedSites)
+        console.log('bsites', blockedSites)
         setBlockedSites(blockedSites)
     }
 
@@ -89,6 +91,25 @@ const BlockedSites = () => {
         const copy = { ...blockedSites }
         delete copy[siteName]
         setBlockedSites(copy)
+    }
+
+    const addSiteToBlockList = async (siteName: string) => {
+        setSiteStatus(siteName, true)
+    }
+
+    const filterBlockList = async (query: string) => {
+        console.log({
+            query,
+            list: blockedSites?.list,
+        })
+        if (!query) return blockedSites?.list ?? {}
+        const sites: extensionData['list'] = {}
+        Object.keys(blockedSites?.list ?? {}).forEach((site) => {
+            if (isSimilar(query, site)) {
+                sites[site] = true
+            }
+        })
+        return sites
     }
 
     useEffect(() => {
@@ -103,25 +124,81 @@ const BlockedSites = () => {
         'https://netflix.com': true,
         'https:://hulu.com': true,
     }
-    const siteCardsJsx = Object.keys(blockedSites ?? temp).map((site) => (
+    const ddPlaceholder = ddOperation == 'Add' ? 'Add Website' : 'Filter List'
+    const ddCallback =
+        ddOperation == 'Add' ? addSiteToBlockList : filterBlockList
+
+    const siteCardsJsx = Object.keys(
+        filterBlockList(inputValue ?? '') ?? temp
+    ).map((site) => (
         <SiteCard siteName={site} removeSite={() => removeBlockedSite(site)} />
     ))
 
+    console.log('list', filterBlockList(inputValue ?? ''))
     const glowColor = 'gray'
     return (
-        <Flex
-            boxShadow={`0 0 5px 5px ${glowColor}, 0 0 10px 10px ${glowColor}, 0 0 10px 15px ${glowColor}, 0 0 50px 20px ${glowColor}`}
+        <Grid
             h={'100%'}
             w={'100%'}
-            overflow={'auto'}
-            flexWrap={'wrap'}
-            borderRadius={'7px'}
-            alignItems={'flex-start'}
-            alignContent={'flex-start'}
-            justifyContent={'flex-start'}
+            gridTemplateRows={'4fr .5fr'}
+            boxShadow={`0 0 5px 5px ${glowColor}, 0 0 10px 10px ${glowColor}, 0 0 10px 15px ${glowColor}, 0 0 50px 20px ${glowColor}`}
         >
-            {siteCardsJsx}
-        </Flex>
+            <Flex
+                w={'100%'}
+                overflow={'auto'}
+                flexWrap={'wrap'}
+                borderRadius={'7px'}
+                alignItems={'flex-start'}
+                alignContent={'flex-start'}
+                justifyContent={'flex-start'}
+            >
+                {siteCardsJsx}
+            </Flex>
+            <Flex
+                border={'1px solid'}
+                shadow={'lg'}
+                backgroundColor={'blackAlpha.500'}
+                justifyContent={'center'}
+                alignItems={'center'}
+            >
+                <InputGroup size='md' w={'40%'}>
+                    <Input
+                        color={'whiteAlpha.500'}
+                        pr='4.5rem'
+                        pl='7rem'
+                        type={'text'}
+                        placeholder={ddPlaceholder}
+                        value={inputValue}
+                        onChange={(input) => setInputValue(input.target.value)}
+                    />
+                    <InputLeftElement width={'6.5rem'}>
+                        <Select
+                            backgroundColor={'white'}
+                            onChange={(input) =>
+                                setDDOperation(
+                                    input.target
+                                        .value as BlockedSiteDDOperations
+                                )
+                            }
+                        >
+                            <option value={'Filter'} color='black'>
+                                Filter
+                            </option>
+                            <option value={'Add'}>Add</option>
+                        </Select>
+                    </InputLeftElement>
+                    <InputRightElement width='4.5rem'>
+                        <Button
+                            h='1.75rem'
+                            size='sm'
+                            onClick={() => ddCallback(inputValue ?? '')}
+                        >
+                            {'Enter'}
+                        </Button>
+                    </InputRightElement>
+                </InputGroup>
+            </Flex>
+        </Grid>
     )
 }
 

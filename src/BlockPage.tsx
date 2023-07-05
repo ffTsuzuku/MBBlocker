@@ -23,6 +23,7 @@ function App() {
                 h={'100vh'}
                 bgColor={'blackAlpha.800'}
                 gridTemplateRows={'1fr'}
+                gridTemplateColumns={'1fr'}
                 justifyContent={'flex-start'}
                 alignItems={'flex-start'}
             >
