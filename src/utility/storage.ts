@@ -25,6 +25,24 @@ const setSiteStatus = async (site: string, status: boolean) => {
     })
 }
 
-export { getSiteStatus, dataKey, setSiteStatus, getExtensionData }
+const removeSiteFromBlackList = async (site: string): Promise<true> => {
+    const extensionData = (await getExtensionData()) ?? {
+        list: {},
+    }
+    const { list } = extensionData
+    delete list[site]
+    chrome.storage.local.set({
+        MbBlock: extensionData,
+    })
+    return true
+}
+
+export {
+    getSiteStatus,
+    dataKey,
+    setSiteStatus,
+    getExtensionData,
+    removeSiteFromBlackList,
+}
 
 export type { extensionData }

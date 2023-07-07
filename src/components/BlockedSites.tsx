@@ -16,6 +16,7 @@ import {
     getExtensionData,
     extensionData,
     setSiteStatus,
+    removeSiteFromBlackList,
 } from '../utility/storage'
 
 import { IoMdClose } from 'react-icons/io'
@@ -82,12 +83,11 @@ const BlockedSites = () => {
     const getBlockedSites = async () => {
         const data = await getExtensionData()
         const { list: blockedSites } = data
-        console.log('bsites', blockedSites)
         setBlockedSites(blockedSites)
     }
 
     const removeBlockedSite = async (siteName: string) => {
-        setSiteStatus(siteName, false)
+        removeSiteFromBlackList(siteName)
         const copy = { ...blockedSites }
         delete copy[siteName]
         setBlockedSites(copy)
@@ -97,15 +97,16 @@ const BlockedSites = () => {
         setSiteStatus(siteName, true)
     }
 
-    const filterBlockList = async (query: string) => {
-        console.log({
-            query,
-            list: blockedSites?.list,
-        })
-        if (!query) return blockedSites?.list ?? {}
+    const filterBlockList = (query: string) => {
+        if (!query) return blockedSites ?? {}
         const sites: extensionData['list'] = {}
-        Object.keys(blockedSites?.list ?? {}).forEach((site) => {
-            if (isSimilar(query, site)) {
+        Object.keys(blockedSites ?? {}).forEach((site) => {
+            console.log({
+                isSimilar: isSimilar(query, site),
+                query,
+                site,
+            })
+            if (isSimilar(query, site, 0.45)) {
                 sites[site] = true
             }
         })
@@ -115,6 +116,10 @@ const BlockedSites = () => {
     useEffect(() => {
         getBlockedSites()
     }, [])
+
+    useEffect(() => {
+        console.log('bsites', blockedSites)
+    }, [blockedSites])
 
     const temp = {
         'https://reddit.com': true,
@@ -134,7 +139,6 @@ const BlockedSites = () => {
         <SiteCard siteName={site} removeSite={() => removeBlockedSite(site)} />
     ))
 
-    console.log('list', filterBlockList(inputValue ?? ''))
     const glowColor = 'gray'
     return (
         <Grid

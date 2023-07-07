@@ -1,4 +1,4 @@
-function isSimilar(str1: string, str2: string) {
+function isSimilar(str1: string, str2: string, threshold = 0.7) {
     const len1 = str1.length
     const len2 = str2.length
     const matrix = []
@@ -29,7 +29,7 @@ function isSimilar(str1: string, str2: string) {
     const similarity = 1 - distance / maxLength
 
     // Return true if similarity is above a certain threshold
-    return similarity >= 0.7 // Adjust the threshold as needed
+    return similarity >= threshold // Adjust the threshold as needed
 }
 
 export { isSimilar }
