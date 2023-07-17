@@ -1,3 +1,4 @@
+import { site } from './storage'
 const getActiveTabUrl = async (): Promise<string | undefined> => {
     return await new Promise((resolve) => {
         chrome.tabs.query(
@@ -10,4 +11,23 @@ const getActiveTabUrl = async (): Promise<string | undefined> => {
     })
 }
 
-export { getActiveTabUrl }
+function isBlockedSite(url: string, blockedSites: site[]) {
+    const parsedUrl = new URL(url)
+
+    for (const blockedSite of blockedSites) {
+        const { domain, path } = blockedSite
+
+        const isSameDomain = parsedUrl.hostname.includes(domain)
+        const isSamePath = parsedUrl.pathname.startsWith(path)
+
+        if (isSameDomain && isSamePath) {
+            return true
+        }
+    }
+
+    return false
+}
+
+function urlToSiteRecord
+
+export { getActiveTabUrl, isBlockedSite }

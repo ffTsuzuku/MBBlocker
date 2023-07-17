@@ -1,25 +1,11 @@
-// import { getSiteStatus } from '../utility/storage'
-// // import { getActiveTabUrl } from '../utility/tabs'
-
-// const main = async () => {
-//     // const site = getActiveTabUrl()
-//     const site = window.location.href
-//     if (!site) return
-//     console.log('site', site)
-//     const blocked = await getSiteStatus(site)
-
-//     if (blocked) {
-//         window.location.href = chrome.runtime.getURL('../block.html')
-//     }
-// }
-
-// main()
+import { extensionData } from '../utility/storage'
+import { isBlockedSite } from '../utility/tabs'
 
 chrome.runtime.sendMessage(
     { action: 'getLocalStorage', key: 'MbBlock' },
     (response) => {
-        const { list } = response ?? {}
-        const blocked = list[window.location.href]
+        const { list } = (response ?? {}) as extensionData
+        const blocked = isBlockedSite(window.location.href, list)
 
         if (blocked) {
             window.location.href =

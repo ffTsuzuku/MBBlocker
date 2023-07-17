@@ -43,7 +43,12 @@ const SiteCard = ({
             position='relative'
             w={{ lg: '333px' }}
         >
-            <Box position={'absolute'} ml={'85%'} p={3} onClick={removeSite}>
+            <Box
+                position={'absolute'}
+                ml={'85%'}
+                p={3}
+                onClick={removeSite}
+            >
                 <IoMdClose
                     cursor={'pointer'}
                     color='black'
@@ -53,8 +58,14 @@ const SiteCard = ({
                     fill='white'
                 />
             </Box>
-            <Image h={'100%'} w={'100%'} src={imageUrl} alt='Card background' />
+            <Image
+                h={'100%'}
+                w={'100%'}
+                src={imageUrl}
+                alt='Card background'
+            />
             <Text
+                isTruncated={true}
                 position='absolute'
                 top='50%'
                 left='50%'
@@ -75,7 +86,8 @@ const SiteCard = ({
 type BlockedSiteDDOperations = 'Add' | 'Filter'
 
 const BlockedSites = () => {
-    const [blockedSites, setBlockedSites] = useState<extensionData['list']>()
+    const [blockedSites, setBlockedSites] =
+        useState<extensionData['list']>()
     const [ddOperation, setDDOperation] =
         useState<BlockedSiteDDOperations>('Filter')
     const [inputValue, setInputValue] = useState<string>()
@@ -117,10 +129,6 @@ const BlockedSites = () => {
         getBlockedSites()
     }, [])
 
-    useEffect(() => {
-        console.log('bsites', blockedSites)
-    }, [blockedSites])
-
     const temp = {
         'https://reddit.com': true,
         'https://google.com': true,
@@ -129,14 +137,20 @@ const BlockedSites = () => {
         'https://netflix.com': true,
         'https:://hulu.com': true,
     }
-    const ddPlaceholder = ddOperation == 'Add' ? 'Add Website' : 'Filter List'
+    const ddPlaceholder =
+        ddOperation == 'Add' ? 'Add Website' : 'Filter List'
     const ddCallback =
         ddOperation == 'Add' ? addSiteToBlockList : filterBlockList
 
     const siteCardsJsx = Object.keys(
-        filterBlockList(inputValue ?? '') ?? temp
+        ddOperation === 'Filter'
+            ? filterBlockList(inputValue ?? '') ?? temp
+            : blockedSites ?? temp
     ).map((site) => (
-        <SiteCard siteName={site} removeSite={() => removeBlockedSite(site)} />
+        <SiteCard
+            siteName={site}
+            removeSite={() => removeBlockedSite(site)}
+        />
     ))
 
     const glowColor = 'gray'
@@ -173,7 +187,9 @@ const BlockedSites = () => {
                         type={'text'}
                         placeholder={ddPlaceholder}
                         value={inputValue}
-                        onChange={(input) => setInputValue(input.target.value)}
+                        onChange={(input) =>
+                            setInputValue(input.target.value)
+                        }
                     />
                     <InputLeftElement width={'6.5rem'}>
                         <Select
@@ -195,7 +211,9 @@ const BlockedSites = () => {
                         <Button
                             h='1.75rem'
                             size='sm'
-                            onClick={() => ddCallback(inputValue ?? '')}
+                            onClick={() =>
+                                ddCallback(inputValue ?? '')
+                            }
                         >
                             {'Enter'}
                         </Button>

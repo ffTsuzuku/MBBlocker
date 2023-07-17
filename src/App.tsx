@@ -5,7 +5,7 @@ import { CgLock, CgLockUnlock } from 'react-icons/cg'
 
 import { Flex } from '@chakra-ui/react'
 
-import { getSiteStatus, setSiteStatus } from './utility/storage'
+import { getSiteStatus, addSiteToBlackList } from './utility/storage'
 
 import { getActiveTabUrl } from './utility/tabs'
 
@@ -21,13 +21,15 @@ function App() {
         setBlockedStatus()
     }, [])
 
-    const toggleBlock = () => {
+    const blockSite = () => {
         const toggleState = async () => {
-            const site = await getActiveTabUrl()
-            console.log('Site', site)
-            if (!site) return
-            setSiteStatus(site, !blocked)
-            setBlocked(!blocked)
+            const site = (await getActiveTabUrl()) ?? ''
+            const url = new URL(site)
+            addSiteToBlackList({
+                domain: url.origin,
+                path: url.pathname,
+            })
+            setBlocked(true)
         }
 
         toggleState()
@@ -37,14 +39,14 @@ function App() {
         <CgLock
             fontSize={'10rem'}
             color={'red'}
-            onClick={() => toggleBlock()}
+            onClick={() => blockSite()}
         />
     )
     const unBlockedIconJSX = (
         <CgLockUnlock
             color='green'
             fontSize={'10rem'}
-            onClick={() => toggleBlock()}
+            onClick={() => blockSite()}
         />
     )
 

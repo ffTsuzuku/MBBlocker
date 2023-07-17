@@ -1,36 +1,47 @@
+import { isBlockedSite } from './tabs'
+
 const dataKey = 'MbBlock'
 
+type site = {
+    domain: string
+    path: string
+}
 type extensionData = {
-    list: { [key: string]: boolean }
+    list: site[]
 }
 
 const getExtensionData = async (): Promise<extensionData> => {
     return (await chrome.storage.local.get(dataKey))[dataKey]
 }
 
-const getSiteStatus = async (href: string): Promise<boolean> => {
-    const { list = {} } = (await getExtensionData()) ?? {}
+const getSiteStatus = async (href: site): Promise<boolean> => {
+    const { list = [] } = (await getExtensionData()) ?? {}
 
-    return list[href]
+    return isBlockedSite(href.domain + href.path, list)
 }
 
-const setSiteStatus = async (site: string, status: boolean) => {
+const addSiteToBlackList = async (site: site) => {
     const extensionData = (await getExtensionData()) ?? {
-        list: {},
+        list: [],
     }
     const { list } = extensionData
-    list[site] = status
+    list.push(site)
     chrome.storage.local.set({
         MbBlock: extensionData,
     })
 }
 
-const removeSiteFromBlackList = async (site: string): Promise<true> => {
+const removeSiteFromBlackList = async (site: site): Promise<true> => {
     const extensionData = (await getExtensionData()) ?? {
         list: {},
     }
-    const { list } = extensionData
-    delete list[site]
+    let { list } = extensionData
+    list = list.filter((blockedSite) => {
+        const sameDomain = blockedSite.domain === site.domain
+        const samePath = blockedSite.path === site.path
+
+        return sameDomain && samePath ? false : true
+    })
     chrome.storage.local.set({
         MbBlock: extensionData,
     })
@@ -40,9 +51,9 @@ const removeSiteFromBlackList = async (site: string): Promise<true> => {
 export {
     getSiteStatus,
     dataKey,
-    setSiteStatus,
+    addSiteToBlackList,
     getExtensionData,
     removeSiteFromBlackList,
 }
 
-export type { extensionData }
+export type { extensionData, site }
