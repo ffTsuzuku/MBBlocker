@@ -119,7 +119,7 @@ const BlockedSites = () => {
 
     const filterBlockList = (query: string): extensionData['list'] => {
         if (!query) return blockedSites ?? []
-        const sites: extensionData['list'] = []
+        const sites: extensionData['list'] = blockedSites ?? []
         const relevantSites = sites.filter((site) => {
             if (isSimilar(query, site.domain, 0.45)) {
                 return true
