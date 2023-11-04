@@ -12,6 +12,7 @@ export default defineConfig({
                 main2: 'src/main.tsx',
                 sourceContent: 'src/contentScripts/block.ts',
                 background: 'src/backgroundJobs/background.ts',
+                tabs: '/src/utility/tabs.ts',
             },
             output: {
                 entryFileNames: 'assets/[name].js',

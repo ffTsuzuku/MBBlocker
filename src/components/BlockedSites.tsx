@@ -15,12 +15,19 @@ import { useEffect, useState } from 'react'
 import {
     getExtensionData,
     extensionData,
-    setSiteStatus,
+    addSiteToBlackList,
     removeSiteFromBlackList,
 } from '../utility/storage'
 
+import { site } from '../utility/storage'
+
 import { IoMdClose } from 'react-icons/io'
 import { isSimilar } from '../utility/strings'
+import {
+    siteRecordToUrl,
+    urlToSiteRecord,
+    createValidURL,
+} from '../utility/tabs'
 
 const SiteCard = ({
     siteName,
@@ -43,12 +50,7 @@ const SiteCard = ({
             position='relative'
             w={{ lg: '333px' }}
         >
-            <Box
-                position={'absolute'}
-                ml={'85%'}
-                p={3}
-                onClick={removeSite}
-            >
+            <Box position={'absolute'} ml={'85%'} p={3} onClick={removeSite}>
                 <IoMdClose
                     cursor={'pointer'}
                     color='black'
@@ -58,12 +60,7 @@ const SiteCard = ({
                     fill='white'
                 />
             </Box>
-            <Image
-                h={'100%'}
-                w={'100%'}
-                src={imageUrl}
-                alt='Card background'
-            />
+            <Image h={'100%'} w={'100%'} src={imageUrl} alt='Card background' />
             <Text
                 isTruncated={true}
                 position='absolute'
@@ -86,11 +83,10 @@ const SiteCard = ({
 type BlockedSiteDDOperations = 'Add' | 'Filter'
 
 const BlockedSites = () => {
-    const [blockedSites, setBlockedSites] =
-        useState<extensionData['list']>()
+    const [blockedSites, setBlockedSites] = useState<extensionData['list']>([])
     const [ddOperation, setDDOperation] =
         useState<BlockedSiteDDOperations>('Filter')
-    const [inputValue, setInputValue] = useState<string>()
+    const [inputValue, setInputValue] = useState<string>('')
 
     const getBlockedSites = async () => {
         const data = await getExtensionData()
@@ -99,57 +95,76 @@ const BlockedSites = () => {
     }
 
     const removeBlockedSite = async (siteName: string) => {
-        removeSiteFromBlackList(siteName)
-        const copy = { ...blockedSites }
-        delete copy[siteName]
-        setBlockedSites(copy)
+        try {
+            const siteToRemove = urlToSiteRecord(siteName)
+            removeSiteFromBlackList(siteToRemove)
+            const copy = [...blockedSites]
+            const updatedCopy = copy.filter((site) => {
+                return (
+                    siteToRemove.domain != site.domain ||
+                    siteToRemove.path != site.path
+                )
+            })
+            setBlockedSites(updatedCopy)
+        } catch (e) {}
     }
 
     const addSiteToBlockList = async (siteName: string) => {
-        setSiteStatus(siteName, true)
+        try {
+            const url = urlToSiteRecord(siteName)
+            console.log('attempting to block', url)
+            addSiteToBlackList(url)
+        } catch (e) {}
     }
 
-    const filterBlockList = (query: string) => {
-        if (!query) return blockedSites ?? {}
-        const sites: extensionData['list'] = {}
-        Object.keys(blockedSites ?? {}).forEach((site) => {
-            console.log({
-                isSimilar: isSimilar(query, site),
-                query,
-                site,
-            })
-            if (isSimilar(query, site, 0.45)) {
-                sites[site] = true
+    const filterBlockList = (query: string): extensionData['list'] => {
+        if (!query) return blockedSites ?? []
+        const sites: extensionData['list'] = []
+        const relevantSites = sites.filter((site) => {
+            if (isSimilar(query, site.domain, 0.45)) {
+                return true
+            } else if (isSimilar(query, site.path, 0.45)) {
+                return true
             }
         })
-        return sites
+        return relevantSites
+    }
+
+    const handleSubmit = (value: string) => {
+        if (ddOperation === 'Add') {
+            const site = urlToSiteRecord(value)
+            addSiteToBlackList(site)
+            const copy = [...blockedSites]
+            copy.push(site)
+            setBlockedSites(copy)
+        } else {
+            filterBlockList(value)
+        }
     }
 
     useEffect(() => {
         getBlockedSites()
     }, [])
 
-    const temp = {
-        'https://reddit.com': true,
-        'https://google.com': true,
-        'https://wiki.com': true,
-        'https://youtube.com': true,
-        'https://netflix.com': true,
-        'https:://hulu.com': true,
-    }
-    const ddPlaceholder =
-        ddOperation == 'Add' ? 'Add Website' : 'Filter List'
+    const temp: site[] = [
+        {
+            domain: 'https://reddit.com',
+            path: '',
+        },
+    ]
+
+    const ddPlaceholder = ddOperation == 'Add' ? 'Add Website' : 'Filter List'
     const ddCallback =
         ddOperation == 'Add' ? addSiteToBlockList : filterBlockList
 
-    const siteCardsJsx = Object.keys(
+    const siteCardsJsx = (
         ddOperation === 'Filter'
-            ? filterBlockList(inputValue ?? '') ?? temp
-            : blockedSites ?? temp
+            ? filterBlockList(inputValue ?? '')
+            : blockedSites ?? []
     ).map((site) => (
         <SiteCard
-            siteName={site}
-            removeSite={() => removeBlockedSite(site)}
+            siteName={site.domain}
+            removeSite={() => removeBlockedSite(siteRecordToUrl(site))}
         />
     ))
 
@@ -187,9 +202,7 @@ const BlockedSites = () => {
                         type={'text'}
                         placeholder={ddPlaceholder}
                         value={inputValue}
-                        onChange={(input) =>
-                            setInputValue(input.target.value)
-                        }
+                        onChange={(input) => setInputValue(input.target.value)}
                     />
                     <InputLeftElement width={'6.5rem'}>
                         <Select
@@ -211,9 +224,7 @@ const BlockedSites = () => {
                         <Button
                             h='1.75rem'
                             size='sm'
-                            onClick={() =>
-                                ddCallback(inputValue ?? '')
-                            }
+                            onClick={() => handleSubmit(inputValue)}
                         >
                             {'Enter'}
                         </Button>

@@ -26,6 +26,7 @@ const addSiteToBlackList = async (site: site) => {
     }
     const { list } = extensionData
     list.push(site)
+    console.log('list is now', list)
     chrome.storage.local.set({
         MbBlock: extensionData,
     })
@@ -36,12 +37,13 @@ const removeSiteFromBlackList = async (site: site): Promise<true> => {
         list: {},
     }
     let { list } = extensionData
-    list = list.filter((blockedSite) => {
+    extensionData.list = list.filter((blockedSite) => {
         const sameDomain = blockedSite.domain === site.domain
         const samePath = blockedSite.path === site.path
 
         return sameDomain && samePath ? false : true
     })
+
     chrome.storage.local.set({
         MbBlock: extensionData,
     })

@@ -7,7 +7,7 @@ import { Flex } from '@chakra-ui/react'
 
 import { getSiteStatus, addSiteToBlackList } from './utility/storage'
 
-import { getActiveTabUrl } from './utility/tabs'
+import { getActiveTabUrl, urlToSiteRecord } from './utility/tabs'
 
 function App() {
     const [blocked, setBlocked] = useState(false)
@@ -16,7 +16,10 @@ function App() {
         const setBlockedStatus = async () => {
             const site = await getActiveTabUrl()
             if (!site) return
-            setBlocked(await getSiteStatus(site))
+            try {
+                const record = urlToSiteRecord(site)
+                setBlocked(await getSiteStatus(record))
+            } catch (e: any) {}
         }
         setBlockedStatus()
     }, [])
@@ -36,11 +39,7 @@ function App() {
     }
 
     const blockedIconJSX = (
-        <CgLock
-            fontSize={'10rem'}
-            color={'red'}
-            onClick={() => blockSite()}
-        />
+        <CgLock fontSize={'10rem'} color={'red'} onClick={() => blockSite()} />
     )
     const unBlockedIconJSX = (
         <CgLockUnlock

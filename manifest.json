@@ -17,6 +17,10 @@
         {
             "resources": ["block.html"],
             "matches": ["https://*/*", "http://*/*"]
+        },
+        {
+            "resources": ["/assets/tabs.js"],
+            "matches": ["https://*/*", "http://*/*"]
         }
     ],
     "permissions": ["storage", "activeTab"],
